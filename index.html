@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Factory</title>
+</head>
+
+<body>
+  <input placeholder="Link e-learning" id="url" />
+  <input placeholder="Username/Nim/Email" id="nim" />
+  <input type="password" placeholder="Password" id="password" />
+  <button onClick="getToken()">Cari token</button>
+  <p id="token">Token: </p>
+
+  <script>
+    function createTokenUrl() {
+      const params = {
+        username: document.getElementById('nim').value,
+        password: document.getElementById('password').value,
+        service: 'moodle_mobile_app'
+      }
+      const url = new URL("/login/token.php", document.getElementById('url').value);
+      url.search = new URLSearchParams(params).toString();
+      return url;
+    }
+
+    async function getToken() {
+      const url = createTokenUrl();
+
+      try {
+        const res = await fetch(url, { method: "POST" });
+        const data = await res.json();
+        document.getElementById("token").innerText = data.token;
+        if (data.error) {
+          throw Error("Username atau password yang anda masukkan salah");
+        }
+      } catch (err) {
+        console.error(err.message);
+      }
+    }
+  </script>
+</body>
+
+</html>
